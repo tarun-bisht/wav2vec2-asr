@@ -1,14 +1,29 @@
 import torch
 import transformers
 import utils.utils as utils
-import sounddevice as sd
+import argparse
+
+parser = argparse.ArgumentParser(description="ASR with recorded audio")
+parser.add_argument("--recording", "-rec", required=True,
+                    help="Trained Model path")
+parser.add_argument("--model", "-m", default="",required=False,
+                    help="Trained Model path")
+parser.add_argument("--tokenizer", "-t", default="", required=False,
+                    help="Trained tokenizer path")
+parser.add_argument("--blocksize", "-bs", default=16000, type=int, required=False,
+                    help="Size of each audio block to be passed to model")
+parser.add_argument("--overlap", "-ov", default=0, type=int, required=False,
+                    help="Overlap between blocks")
+parser.add_argument("--output", "-out", required=False,
+                    help="Output Path for saving resultant transcriptions")
+
+args = parser.parse_args()
 
 print("Loading Models ...")
-# tokenizer = transformers.Wav2Vec2Tokenizer.from_pretrained("facebook/wav2vec2-base-960h")
-# model = transformers.Wav2Vec2ForCTC.from_pretrained("facebook/wav2vec2-base-960h")
-## if models are not saved then uncomment above lines
-tokenizer = torch.load("models/wave2vec2-base-960h-tokenizer")
-model = torch.load("models/wave2vec2-base-960h")
+tokenizer = (transformers.Wav2Vec2Tokenizer.from_pretrained("facebook/wav2vec2-base-960h") 
+                if args.tokenizer == "" else torch.load(args.tokenizer))
+model = (transformers.Wav2Vec2ForCTC.from_pretrained("facebook/wav2vec2-base-960h") 
+            if args.model == "" else torch.load(args.model))
 print("Models Loaded ...")
 
 def transcribe_input(tokenizer, model, inputs):
@@ -18,19 +33,24 @@ def transcribe_input(tokenizer, model, inputs):
     return tokenizer.decode(predicted_ids[0])
 
 print("Start Transcribing...")
-audio_path = "input/Achievements_of_the_Democratic_Party_(Homer_S._Cummings).ogg"
 
-stream = utils.AudioStreaming(audio_path=audio_path, 
-                            blocksize=16000*2, 
+stream = utils.AudioStreaming(audio_path=args.recording, 
+                            blocksize=args.blocksize, 
                             overlap=0, 
                             padding=0, 
                             sr=16000, 
                             dtype="float32")
 
-with open("transcription.txt", "w") as f:
+if args.output:
+    with open(args.output, "w") as f:
+        for block in stream.generator():
+            transcriptions = transcribe_input(tokenizer, model, block)
+            if not transcriptions == "":
+                f.write(transcriptions)
+                print(transcriptions)
+else:
     for block in stream.generator():
         transcriptions = transcribe_input(tokenizer, model, block)
         if not transcriptions == "":
-            f.write(transcriptions)
             print(transcriptions)
 

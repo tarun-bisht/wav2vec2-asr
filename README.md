@@ -4,7 +4,51 @@ This repository uses wave2net2 model from hugging face transformers to create an
 
 ## Installation
 
-- Install latest version of python (current 3.8) or miniconda 
-- Create a virtual environment using `python -m venv env_name` or `conda create --name env_name python==3.8`
-- enable created environment `conda activate env_name` or `env_path\Scripts\activate`
+### Installing via pip
+- Download and Install python (recommend 3.8)
+- Create a virtual environment using `python -m venv env_name`
+- enable created environment `env_path\Scripts\activate`
+- Install PyTorch `pip install torch==1.8.0+cu102 torchaudio===0.8.0 -f https://download.pytorch.org/whl/torch_stable.html`
 - install required dependencies `pip install -r requirements.txt`
+
+### Installing via conda
+- Download and install miniconda
+- Create a new virutal environment using `conda create --name env_name python==3.8`
+- enable create environment `conda activate env_name`
+- Install PyTorch `conda install pytorch torchaudio cudatoolkit=11.1 -c pytorch`
+- install required dependencies `pip install -r requirements.txt`
+
+## Inferencing
+### via recorded audio
+- run  `python asr_inference_recording.py` with parameters:
+    - `--recording` or `-rec` : path to audio recording
+    - `--model` or `-m`: path to saved wavenetctc model if not passed it will be downloaded (default = "")
+    - `--tokenizer` or `-t` : path to saved wavenettokenizer model if not passed then it will be downloaded (default = "")
+    - `--blocksize` or `-bs` : size of each audio block to be passed to model (default = 16000)
+    - `--overlap` or `-ov` : overlapping between each loaded block (default = 0)
+    - `--output` or `-out` : path to output file to save transcriptions. (not required)
+- example
+    - `python asr_inference_recording.py --recording input/rec.ogg -bs 16000 -out output/transcription.txt`
+    - `python asr_inference_recording.py --recording input/rec.ogg -bs 16000 -ov 1600 -out output/transcription.txt`
+
+### via live recording
+- run  `python asr_inference_live.py` with parameters:
+    - `--model` or `-m`: path to saved wavenetctc model if not passed it will be downloaded (default = "")
+    - `--tokenizer` or `-t` : path to saved wavenettokenizer model if not passed then it will be downloaded (default = "")
+    - `--blocksize` or `-bs` : size of each audio block to be passed to model (default = 16000)
+    - `--output` or `-out` : path to output file to save transcriptions. (not required)
+- example
+    - `python asr_inference_live.py -bs 16000 -out output/transcription.txt`
+
+## To do list
+- Environment Setup ✔
+- Inferencing with CPU ✔
+- Inferencing with GPU 
+- Converting model to tensorflow with onnx for inference using tensorflow
+- Training and Finetuning
+
+## Tested Platforms
+- native windows 10 ✔
+- windows-10 wsl2 cpu
+- windows-10 wsl2 gpu
+- Ubuntu

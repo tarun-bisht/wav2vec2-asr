@@ -1,13 +1,25 @@
 import torch
 import transformers
 import utils.utils as utils
+import argparse
+
+parser = argparse.ArgumentParser(description="ASR with live audio")
+parser.add_argument("--model", "-m", default="",required=False,
+                    help="Trained Model path")
+parser.add_argument("--tokenizer", "-t", default="", required=False,
+                    help="Trained tokenizer path")
+parser.add_argument("--blocksize", "-bs", default=16000, type=int, required=False,
+                    help="Size of each audio block to be passed to model")
+parser.add_argument("--output", "-out", required=False,
+                    help="Output Path for saving resultant transcriptions")
+
+args = parser.parse_args()
 
 print("Loading Models ...")
-# tokenizer = transformers.Wav2Vec2Tokenizer.from_pretrained("facebook/wav2vec2-base-960h")
-# model = transformers.Wav2Vec2ForCTC.from_pretrained("facebook/wav2vec2-base-960h")
-## if models are not saved then uncomment above lines
-tokenizer = torch.load("models/wave2vec2-base-960h-tokenizer")
-model = torch.load("models/wave2vec2-base-960h")
+tokenizer = (transformers.Wav2Vec2Tokenizer.from_pretrained("facebook/wav2vec2-base-960h") 
+                if args.tokenizer == "" else torch.load(args.tokenizer))
+model = (transformers.Wav2Vec2ForCTC.from_pretrained("facebook/wav2vec2-base-960h") 
+            if args.model == "" else torch.load(args.model))
 print("Models Loaded ...")
 
 def transcribe_input(tokenizer, model, inputs):
@@ -17,10 +29,19 @@ def transcribe_input(tokenizer, model, inputs):
     return tokenizer.decode(predicted_ids[0])
 
 print("Start Transcribing...")
-with utils.MicrophoneStreaming(buffersize=16000*2) as stream:
-    with open("transcription.txt", "w") as f:
+
+if args.output:
+    with utils.MicrophoneStreaming(buffersize=args.buffersize) as stream:
+        with open(args.output, "w") as f:
+            for block in stream.generator():
+                transcriptions = transcribe_input(tokenizer, model, block)
+                if not transcriptions == "":
+                    f.write(transcriptions)
+                    print(transcriptions)
+else:
+    with utils.MicrophoneStreaming(buffersize=16000*2) as stream:
         for block in stream.generator():
             transcriptions = transcribe_input(tokenizer, model, block)
             if not transcriptions == "":
-                f.write(transcriptions)
                 print(transcriptions)
+

@@ -1,3 +1,6 @@
+'''
+Example Snippets
+'''
 import utils.utils as utils
 
 ## audio path to load
