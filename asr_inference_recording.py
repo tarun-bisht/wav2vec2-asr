@@ -45,10 +45,9 @@ def print_transcriptions(transcriptions):
     print(transcriptions, end=" ")
 
 def write_to_file(output_file, transcriptions):
-    with open(output_file, "w") as f:
-        f.write(transcriptions)
+    output_file.write(transcriptions)
 
-def capture_and_transcribe():
+def capture_and_transcribe(output_file=None):
     infer_time = []
     for block in stream.generator():
         start = time.time()
@@ -59,8 +58,8 @@ def capture_and_transcribe():
         infer_time.append(end-start)
         if not transcriptions == "":
             print_transcriptions(transcriptions=transcriptions)
-            if args.output is not None:
-                write_to_file(output_file=args.output, 
+            if output_file is not None:
+                write_to_file(output_file=output_file, 
                             transcriptions=transcriptions)
     return np.mean(infer_time)
 
@@ -76,7 +75,11 @@ if __name__=="__main__":
     print("Start Transcribing...")
     try:
         start = time.time()
-        infer_time = capture_and_transcribe()
+        if args.output:
+            with open(args.output, "w") as f:
+                infer_time = capture_and_transcribe(f)
+        else:
+            infer_time = capture_and_transcribe()
         end = time.time()
         print(f"Total Time Taken: {end-start}sec")
         print(f"Average Inference Time: {infer_time}sec")

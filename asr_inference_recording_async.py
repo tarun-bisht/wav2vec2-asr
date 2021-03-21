@@ -61,10 +61,9 @@ def print_transcriptions(transcriptions):
     print(transcriptions, end=" ")
 
 def write_to_file(output_file, transcriptions):
-    with open(output_file, "w") as f:
-        f.write(transcriptions)
+    output_file.write(transcriptions)
 
-async def capture_and_transcribe():
+async def capture_and_transcribe(output_file=None):
     infer_time = []
     loop = asyncio.get_running_loop()
     for block in stream.generator():
@@ -82,17 +81,22 @@ async def capture_and_transcribe():
             await loop.run_in_executor(None, print_func)
             end = time.time()
             infer_time.append(end-start)
-            if args.output is not None:
-                write_func = functools.partial(write_to_file, output_file=args.output, 
+            if output_file is not None:
+                write_func = functools.partial(write_to_file, output_file=output_file, 
                                                 transcriptions=transcriptions)
                 await loop.run_in_executor(None, write_func)
+                
     return np.mean(infer_time)
 
 if __name__=="__main__":
     print("Start Transcribing...")
     try:
         start = time.time()
-        infer_time = asyncio.run(capture_and_transcribe())
+        if args.output:
+            with open(args.output, "w") as f:
+                infer_time = asyncio.run(capture_and_transcribe(f))
+        else:
+            infer_time = asyncio.run(capture_and_transcribe())
         end = time.time()
         print(f"Total Time Taken: {end-start}sec")
         print(f"Average Inference Time: {infer_time}sec")

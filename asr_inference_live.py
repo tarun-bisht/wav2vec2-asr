@@ -38,10 +38,9 @@ def print_transcriptions(transcriptions):
     print(transcriptions, end=" ")
 
 def write_to_file(output_file, transcriptions):
-    with open(output_file, "w") as f:
-        f.write(transcriptions)
+    output_file.write(transcriptions)
 
-def capture_and_transcribe():
+def capture_and_transcribe(output_file=None):
     with utils.MicrophoneStreaming(buffersize=args.blocksize) as stream:
         for block in stream.generator():
             transcriptions = transcribe_input(tokenizer=tokenizer, 
@@ -49,13 +48,17 @@ def capture_and_transcribe():
                                             inputs=block)
             if not transcriptions == "":
                 print_transcriptions(transcriptions=transcriptions)
-                if args.output is not None:
-                    write_to_file(output_file=args.output, 
+                if output_file is not None:
+                    write_to_file(output_file=output_file, 
                                     transcriptions=transcriptions)
 
-if __name__=="__main__"
+if __name__=="__main__":
     print("Start Transcribing...")
     try:
-        capture_and_transcribe()
+        if args.output:
+            with open(args.output, "w") as f:
+                capture_and_transcribe(f)
+        else:
+            capture_and_transcribe()
     except KeyboardInterrupt:
         print("Exited")

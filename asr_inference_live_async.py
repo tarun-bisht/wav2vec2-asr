@@ -40,10 +40,9 @@ def print_transcriptions(transcriptions):
     print(transcriptions, end=" ")
 
 def write_to_file(output_file, transcriptions):
-    with open(output_file, "w") as f:
-        f.write(transcriptions)
+    output_file.write(transcriptions)
 
-async def capture_and_transcribe():
+async def capture_and_transcribe(output_file=None):
     loop = asyncio.get_running_loop()
     async with utils.MicrophoneStreaming(buffersize=args.blocksize) as stream:
         async for block in stream.generator():
@@ -55,15 +54,19 @@ async def capture_and_transcribe():
             if not transcriptions == "":
                 print_func = functools.partial(print_transcriptions, transcriptions=transcriptions)
                 await loop.run_in_executor(None, print_func)
-                if args.output is not None:
-                    write_func = functools.partial(write_to_file, output_file=args.output, 
+                if output_file is not None:
+                    write_func = functools.partial(write_to_file, output_file=output_file, 
                                                     transcriptions=transcriptions)
                     await loop.run_in_executor(None, write_func)
 
 if __name__=="__main__":
     print("Start Transcribing...")
     try:
-        asyncio.run(capture_and_transcribe())
+        if args.output:
+            with open(args.output, "w") as f:
+                asyncio.run(capture_and_transcribe(f))
+        else:
+            asyncio.run(capture_and_transcribe())
     except KeyboardInterrupt:
         print("Exited")
 
