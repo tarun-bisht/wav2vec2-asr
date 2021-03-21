@@ -32,7 +32,7 @@ This repository uses wave2net2 model from hugging face transformers to create an
     - `python asr_inference_recording.py --recording input/rec.ogg -bs 16000 -out output/transcription.txt`
     - `python asr_inference_recording.py --recording input/rec.ogg -bs 16000 -ov 1600 -out output/transcription.txt`
     - `python asr_inference_recording.py --recording input/rec.ogg -bs 16000 -ov 1600 -out output/transcription.txt --device gpu`
-    - - `python asr_inference_recording_async.py --recording input/rec.ogg -bs 16000 -ov 1600 -out output/transcription.txt --device cpu`
+    - `python asr_inference_recording_async.py --recording input/rec.ogg -bs 16000 -ov 1600 -out output/transcription.txt --device cpu`
 
 ### via live recording
 - run  `python asr_inference_live.py` or `python asr_inference_live_async.py` with parameters:
@@ -49,17 +49,17 @@ This repository uses wave2net2 model from hugging face transformers to create an
 
 ### Comparisions
 - ### GPU inference vs CPU inference
-For 4min 10sec recorder audio total time taken
-    - GPU (Nvidia GeForce 940MX) : 18.29sec
-    - CPU : 116.85sec
+    For 4min 10sec recorder audio total time taken
+        - GPU (Nvidia GeForce 940MX) : 18.29sec
+        - CPU : 116.85sec
 - ### Async vs Non Async version
-For 4min 10sec recorded audio average inference time
-    - With GPU (Nvidia GeForce 940MX)
-        - Async version: 0.056sec
-        - Non Async version: 0.11sec
-    - With CPU
-        - Async version: 0.31sec
-        - Non Async version: 0.54sec
+    For 4min 10sec recorded audio average inference time
+        - With GPU (Nvidia GeForce 940MX)
+            - Async version: 0.056sec
+            - Non Async version: 0.11sec
+        - With CPU
+            - Async version: 0.31sec
+            - Non Async version: 0.54sec
 
 ## To do list
 - Environment Setup ✔
