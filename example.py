@@ -37,4 +37,24 @@ filename = "hello.wav"
 with utils.MicrophoneStreaming() as stream:
     stream.record_to_file(filename, duration=10)
 
+# ~~~~~~ Async examples ~~~~~~~~
 
+## saving recording to audio file
+filename = "hello.wav" 
+async def save_audio(filename, duration):
+    async with utils.MicrophoneStreaming() as stream:
+        await stream.record_to_file(filename, duration=duration)
+print("start recording")
+asyncio.run(save_audio(filename=filename, duration=10))
+
+
+## async microphone streaming
+async def capture():
+    async with utils.MicrophoneStreaming() as stream:
+        async for block in stream.generator():
+            # process data here
+            print(len(block))
+try:
+    asyncio.run(capture())
+except KeyboardInterrupt:
+    print("Exited")
