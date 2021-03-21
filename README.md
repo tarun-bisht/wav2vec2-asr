@@ -49,17 +49,17 @@ This repository uses wave2net2 model from hugging face transformers to create an
 
 ### Comparisions
 - ### GPU inference vs CPU inference
-    For 4min 10sec recorder audio total time taken
-        - GPU (Nvidia GeForce 940MX) : 18.29sec
-        - CPU : 116.85sec
+For 4min 10sec recorder audio total time taken
+1. GPU (Nvidia GeForce 940MX) : 18.29sec
+2. CPU : 116.85sec
 - ### Async vs Non Async version
-    For 4min 10sec recorded audio average inference time
-        - With GPU (Nvidia GeForce 940MX)
-            - Async version: 0.056sec
-            - Non Async version: 0.11sec
-        - With CPU
-            - Async version: 0.31sec
-            - Non Async version: 0.54sec
+For 4min 10sec recorded audio average inference time
+- With GPU (Nvidia GeForce 940MX)
+    1. Async version: 0.056sec
+    2. Non Async version: 0.11sec
+- With CPU
+    1. Async version: 0.31sec
+    2. Non Async version: 0.54sec
 
 ## To do list
 - Environment Setup ✔
