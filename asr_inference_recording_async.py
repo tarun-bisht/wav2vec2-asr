@@ -37,12 +37,6 @@ model.eval()
 model.to(device)
 print("Models Loaded ...")
 
-def transcribe_input(tokenizer, model, inputs):
-    inputs = tokenizer(inputs, return_tensors='pt').input_values.to(device)
-    logits = model(inputs).logits
-    predicted_ids = torch.argmax(logits, dim =-1)
-    return tokenizer.decode(predicted_ids[0])
-
 stream = utils.AudioStreaming(audio_path=args.recording, 
                             blocksize=args.blocksize, 
                             overlap=args.overlap, 
