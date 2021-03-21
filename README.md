@@ -20,7 +20,7 @@ This repository uses wave2net2 model from hugging face transformers to create an
 
 ## Inferencing
 ### via recorded audio
-- run  `python asr_inference_recording.py` with parameters:
+- run  `python asr_inference_recording.py` or `python asr_inference_recording_async.py` with parameters:
     - `--recording` or `-rec` : path to audio recording
     - `--model` or `-m`: path to saved wavenetctc model if not passed it will be downloaded (default = "")
     - `--tokenizer` or `-t` : path to saved wavenettokenizer model if not passed then it will be downloaded (default = "")
@@ -32,10 +32,10 @@ This repository uses wave2net2 model from hugging face transformers to create an
     - `python asr_inference_recording.py --recording input/rec.ogg -bs 16000 -out output/transcription.txt`
     - `python asr_inference_recording.py --recording input/rec.ogg -bs 16000 -ov 1600 -out output/transcription.txt`
     - `python asr_inference_recording.py --recording input/rec.ogg -bs 16000 -ov 1600 -out output/transcription.txt --device gpu`
-    - - `python asr_inference_recording.py --recording input/rec.ogg -bs 16000 -ov 1600 -out output/transcription.txt --device cpu`
+    - - `python asr_inference_recording_async.py --recording input/rec.ogg -bs 16000 -ov 1600 -out output/transcription.txt --device cpu`
 
 ### via live recording
-- run  `python asr_inference_live.py` with parameters:
+- run  `python asr_inference_live.py` or `python asr_inference_live_async.py` with parameters:
     - `--model` or `-m`: path to saved wavenetctc model if not passed it will be downloaded (default = "")
     - `--tokenizer` or `-t` : path to saved wavenettokenizer model if not passed then it will be downloaded (default = "")
     - `--blocksize` or `-bs` : size of each audio block to be passed to model (default = 16000)
@@ -45,22 +45,32 @@ This repository uses wave2net2 model from hugging face transformers to create an
     - `python asr_inference_live.py -bs 16000 -out output/transcription.txt`
     - `python asr_inference_live.py`
     - `python asr_inference_live.py --device cuda`
-    - `python asr_inference_live.py --device cpu`
+    - `python asr_inference_live_async.py --device cpu`
 
-### GPU inference vs CPU inference
-For 4min 10sec recorder audio
+### Comparisions
+- ### GPU inference vs CPU inference
+For 4min 10sec recorder audio total time taken
     - GPU (Nvidia GeForce 940MX) : 18.29sec
     - CPU : 116.85sec
+- ### Async vs Non Async version
+For 4min 10sec recorded audio average inference time
+    - With GPU (Nvidia GeForce 940MX)
+        - Async version: 0.056sec
+        - Non Async version: 0.11sec
+    - With CPU
+        - Async version: 0.31sec
+        - Non Async version: 0.54sec
 
 ## To do list
 - Environment Setup ✔
 - Inferencing with CPU ✔
 - Inferencing with GPU ✔
+- Asyncio Compatible ✔
 - Converting model to tensorflow with onnx for inference using tensorflow
 - Training and Finetuning
 
 ## Tested Platforms
 - native windows 10 ✔
-- windows-10 wsl2 cpu
-- windows-10 wsl2 gpu
+- windows-10 wsl2 cpu ✔
+- windows-10 wsl2 gpu ✔
 - Ubuntu

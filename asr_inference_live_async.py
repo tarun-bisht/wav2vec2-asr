@@ -1,7 +1,9 @@
 import torch
 import transformers
-import utils.utils as utils
+import utils.async_utils as utils
 import argparse
+import asyncio
+import functools
 
 parser = argparse.ArgumentParser(description="ASR with live audio")
 parser.add_argument("--model", "-m", default="",required=False,
@@ -41,21 +43,27 @@ def write_to_file(output_file, transcriptions):
     with open(output_file, "w") as f:
         f.write(transcriptions)
 
-def capture_and_transcribe():
-    with utils.MicrophoneStreaming(buffersize=args.blocksize) as stream:
-        for block in stream.generator():
-            transcriptions = transcribe_input(tokenizer=tokenizer, 
-                                            model=model, 
-                                            inputs=block)
+async def capture_and_transcribe():
+    loop = asyncio.get_running_loop()
+    async with utils.MicrophoneStreaming(buffersize=args.blocksize) as stream:
+        async for block in stream.generator():
+            process_func = functools.partial(transcribe_input, 
+                                    tokenizer=tokenizer, 
+                                    model=model, 
+                                    inputs=block)
+            transcriptions = await loop.run_in_executor(None, process_func)
             if not transcriptions == "":
-                print_transcriptions(transcriptions=transcriptions)
+                print_func = functools.partial(print_transcriptions, transcriptions=transcriptions)
+                await loop.run_in_executor(None, print_func)
                 if args.output is not None:
-                    write_to_file(output_file=args.output, 
-                                    transcriptions=transcriptions)
+                    write_func = functools.partial(write_to_file, output_file=args.output, 
+                                                    transcriptions=transcriptions)
+                    await loop.run_in_executor(None, write_func)
 
-if __name__=="__main__"
+if __name__=="__main__":
     print("Start Transcribing...")
     try:
-        capture_and_transcribe()
+        asyncio.run(capture_and_transcribe())
     except KeyboardInterrupt:
         print("Exited")
+
