@@ -1,4 +1,4 @@
-# Wave2Net2 Sound Recognition
+# Wave2Vet2 Sound Recognition
 
 This repository uses wave2net2 model from hugging face transformers to create an ASR system.
 
