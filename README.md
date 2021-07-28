@@ -1,6 +1,6 @@
-# Wave2Vec2 Sound Recognition
+# Wav2Vec2 Sound Recognition
 
-This repository uses wave2net2 model from hugging face transformers to create an ASR system.
+This repository uses wav2vec2 model from hugging face transformers to create an ASR system.
 
 ## Installation
 
@@ -19,7 +19,7 @@ This repository uses wave2net2 model from hugging face transformers to create an
 - install required dependencies `pip install -r requirements.txt`
 
 ## Inferencing
-### via recorded audio
+### transcribing an audio file
 - run  `python asr_inference_recording.py` or `python asr_inference_recording_async.py` with parameters:
     - `--recording` or `-rec` : path to audio recording
     - `--model` or `-m`: path to saved wavenetctc model if not passed it will be downloaded (default = "")
@@ -34,7 +34,7 @@ This repository uses wave2net2 model from hugging face transformers to create an
     - `python asr_inference_recording.py --recording input/rec.ogg -bs 16000 -ov 1600 -out output/transcription.txt --device gpu`
     - `python asr_inference_recording_async.py --recording input/rec.ogg -bs 16000 -ov 1600 -out output/transcription.txt --device cpu`
 
-### via live recording
+### live recording and transcribing
 - run  `python asr_inference_live.py` or `python asr_inference_live_async.py` with parameters:
     - `--model` or `-m`: path to saved wavenetctc model if not passed it will be downloaded (default = "")
     - `--tokenizer` or `-t` : path to saved wavenettokenizer model if not passed then it will be downloaded (default = "")
@@ -47,7 +47,7 @@ This repository uses wave2net2 model from hugging face transformers to create an
     - `python asr_inference_live.py --device cuda`
     - `python asr_inference_live_async.py --device cpu`
 
-### Comparisions
+## Comparisions
 - ### GPU inference vs CPU inference
 For 4min 10sec recorder audio total time taken
 1. GPU (Nvidia GeForce 940MX) : 18.29sec
@@ -73,4 +73,4 @@ For 4min 10sec recorded audio average inference time
 - native windows 10 ✔
 - windows-10 wsl2 cpu ✔
 - windows-10 wsl2 gpu ✔
-- Ubuntu
+- Ubuntu ✔
