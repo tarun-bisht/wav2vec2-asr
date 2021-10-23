@@ -11,13 +11,14 @@ class Wav2Vec2ASR:
     Wav2Vec2 class wrapper for speech recognition
     """
 
-    def __init__(self, device: str = "cpu", processor_path: str = None,
-                 model_path: str = None,
+    def __init__(self, sr: int = 16000, device: str = "cpu", 
+                 processor_path: str = None, model_path: str = None,
                  pretrained_model_name: str = "facebook/wav2vec2-base-960h",
                  beam_width: int = 5, lm_path: str = None):
         """Wave2Vec2 class constructor
 
         Args:
+            sr (int, optional): sample rate of audio passing as input
             device (str, optional): device to load model and inputs choices are 'cpu' and 'cuda. Defaults to "cpu".
             processor_path (str, optional): path to saved local processor files. Defaults to None.
             model_path (str, optional): path to saved local model. Defaults to None
@@ -25,6 +26,7 @@ class Wav2Vec2ASR:
             beam_width (int, optional): width of beam search more the number better the results but increase computation. Defaults to 5.
             lm_path (str, optional): path to saved language model. Defaults to None.
         """
+        self.sr = sr
         self.device = torch.device(device)
         self.processor_path = processor_path
         self.model_path = model_path
@@ -45,7 +47,7 @@ class Wav2Vec2ASR:
         self.model = model
         self.processor = processor
 
-    def _transcribe(self, inputs: torch.tensor)->str:
+    def _transcribe(self, inputs: torch.tensor) -> str:
         """transcribe input speech and return resulting transcription
 
         Args:
@@ -53,9 +55,10 @@ class Wav2Vec2ASR:
 
         Returns:
             str: transcription of raw speech signal
-        """               
-        inputs = self.processor(
-            inputs, return_tensors='pt').input_values.to(self.device)
+        """
+        inputs = self.processor(inputs, sampling_rate=self.sr,
+                                padding="longest",
+                                return_tensors='pt').input_values.to(self.device)
         with torch.no_grad():
             logits = self.model(inputs).logits
         outs = self.decoder(logits)
@@ -82,7 +85,7 @@ class Wav2Vec2ASR:
             transcriptions = await loop.run_in_executor(None, process_func)
             yield transcriptions
 
-    async def transcribe(self, inputs:torch.tensor, loop=None):
+    async def transcribe(self, inputs: torch.tensor, loop=None):
         """transcribe and audio signal use for offline audio transcription
 
         Args:

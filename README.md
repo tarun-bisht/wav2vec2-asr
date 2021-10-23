@@ -60,13 +60,19 @@ This repository uses wav2vec2 model from hugging face transformers to create an 
     - `python asr_inference_live.py`
     - `python asr_inference_live.py --device cuda`
 
-### Notebooks
+## Training Language Model
+- run `python asr_inference_live.py` with parameters:
+    - `--corpus` or `-c` : path to corpus text file.
+    - `--save` or `-s` : folder path to save model files.
+
+## Notebooks
 All notebooks resides in notebook folder these are handy when using google colab or similar platforms. All these notebooks are tested in google colab.
 - `wav2vec2_asr_pretrained_inference` : Basic inference notebook
 - `wav2vec2_experiment_language_model` : kenlm language model with beam search
 - `wav2vec2large_experiment_language_model` : kenlm language model with beam search for larger model
 - `wav2vec2_finetuning_version_1` : finetuning notebook without augmentation
 - `wav2vec2_finetuning_version_2_with_data_augmentations` : finetuning notebook with augmentation
+- `Training_Simple_Lanugage_Model` : training language model notebook version with wikipedia data
 
 ## Comparisions
 ### GPU inference vs CPU inference
@@ -88,3 +94,7 @@ For 4min 10sec recorder audio total time taken
 - windows-10 wsl2 cpu ✔
 - windows-10 wsl2 gpu ✔
 - Linux ✔
+
+## References
+- [Hugging Face Wav2Vec2](https://huggingface.co/transformers/master/model_doc/wav2vec2.html)
+- [CTC decoder adapted from](https://github.com/githubharald/CTCDecoder)

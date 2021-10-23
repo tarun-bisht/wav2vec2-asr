@@ -1,3 +1,3 @@
 from .utils import (MicrophoneStreaming, AudioStreaming, 
-                    AudioReader, MicrophoneCaptureFailed, 
-                    BeamSearchDecoder)
+                    AudioReader, MicrophoneCaptureFailed)
+from .beam_search_decoder import BeamSearchDecoder

@@ -2,7 +2,7 @@ import torch
 import numpy as np
 from asr.language_model import LanguageModel
 from asr.utils import BeamSearchDecoder
-from asr.wave2vec2.vocab import vocab_list
+from asr.wav2vec2.vocab import vocab_list
 
 
 class CTCDecoder:
@@ -21,7 +21,7 @@ class CTCDecoder:
             self.mode = "beam"
             if lm_path is not None:
                 self.mode = "beam_lm"
-                lm = LanguageModel()
+                lm = LanguageModel(chars=vocab_list[1:])
                 lm.load(lm_path)
         self._beam_search = BeamSearchDecoder(vocab_list[1:],
                                               blank_idx,
@@ -42,25 +42,24 @@ class CTCDecoder:
         """
         out_proba = torch.nn.functional.softmax(logits, dim=-1)[0]
         if self.mode == "greedy":
-            out = self._greedy_path(out_proba)
+            out = self._greedy_path(out_proba).cpu().numpy()
         elif self.mode == "beam":
-            out = self._beam_search(out_proba.numpy())[0]
+            out = self._beam_search(out_proba.cpu().numpy())[0]
         elif self.mode == "beam_lm":
-            out = self._beam_search(out_proba.numpy())[0]
+            out = self._beam_search(out_proba.cpu().numpy())[0]
         else:
             out = None
             raise ValueError(
                 "Mode not defined mode choices [greedy, beam and beam_lm]")
         return out
 
-    def _greedy_path(self, logits: torch.tensor) -> torch.tensor:
+    def _greedy_path(self, probs: torch.tensor) -> torch.tensor:
         """max decoding ctc output by taking maximum probabilities from each timestep
 
         Args:
-            logits (torch.tensor): softmax logits from model
+            probs (torch.tensor): softmax logits from model
 
         Returns:
             torch.tensor: max decoded outputs
         """
-        out_proba = torch.nn.functional.softmax(logits, dim=-1)
-        return torch.argmax(out_proba, axis=1).numpy()
+        return torch.argmax(probs, axis=1)
