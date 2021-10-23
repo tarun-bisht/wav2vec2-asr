@@ -1,0 +1,1 @@
+from .inference import Wav2Vec2ASR

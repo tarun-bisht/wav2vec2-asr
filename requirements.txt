@@ -1,5 +1,3 @@
-librosa==0.8.0
-PyAudio==0.2.11
 sounddevice==0.4.1
 SoundFile==0.10.3.post1
-transformers==4.3.3
+transformers==4.11.3
