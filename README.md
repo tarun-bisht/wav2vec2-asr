@@ -97,4 +97,4 @@ For 4min 10sec recorder audio total time taken
 
 ## References
 - [Hugging Face Wav2Vec2](https://huggingface.co/transformers/master/model_doc/wav2vec2.html)
-- [CTC decoder adapted from](https://github.com/githubharald/CTCDecoder)
+- [CTC decoder adapted from githubharald/CTCDecoder](https://github.com/githubharald/CTCDecoder)
