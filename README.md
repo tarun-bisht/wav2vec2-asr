@@ -2,6 +2,8 @@
 
 This repository uses wav2vec2 model from hugging face transformers to create an ASR system which takes input speech signal as input and outputs transcriptions asynchronously.
 
+I have also written a [post](https://www.tarunbisht.com/deep%20learning/2021/06/17/speech-recognition-using-wav2vec-model/) explaining wave2vec2 in some detail with some further learning directions.
+
 ## Installation
 
 ### Installing via pip
